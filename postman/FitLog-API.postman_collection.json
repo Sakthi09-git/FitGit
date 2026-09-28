@@ -1,0 +1,428 @@
+{
+  "info": {
+    "_postman_id": "fitlog-collection-id",
+    "name": "FitLog — Personal Workout and Calorie Tracker API",
+    "description": "Comprehensive Postman test collection for FitLog Spring Boot + MySQL backend, including all positive CRUD routes, summaries, weekly trends, and 10 negative test scenarios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. User APIs",
+      "item": [
+        {
+          "name": "POST Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vikram Patel\",\n  \"email\": \"vikram@example.com\",\n  \"phone\": \"9876501234\",\n  \"password\": \"secret123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "GET All Users",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "GET User By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users/{{testUserId}}", "host": ["{{baseUrl}}"], "path": ["api", "users", "{{testUserId}}"] }
+          }
+        },
+        {
+          "name": "PUT Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Arun Kumar Updated\",\n  \"email\": \"arun@example.com\",\n  \"phone\": \"9876543210\",\n  \"active\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users/{{testUserId}}", "host": ["{{baseUrl}}"], "path": ["api", "users", "{{testUserId}}"] }
+          }
+        },
+        {
+          "name": "DELETE User",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/users/3", "host": ["{{baseUrl}}"], "path": ["api", "users", "3"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Workout APIs",
+      "item": [
+        {
+          "name": "POST Create Workout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"workoutType\": \"RUNNING\",\n  \"durationMinutes\": 30,\n  \"caloriesBurned\": 250,\n  \"workoutDate\": \"2026-09-28\",\n  \"notes\": \"Morning run in park\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/workouts", "host": ["{{baseUrl}}"], "path": ["api", "workouts"] }
+          }
+        },
+        {
+          "name": "GET All Workouts",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/workouts", "host": ["{{baseUrl}}"], "path": ["api", "workouts"] }
+          }
+        },
+        {
+          "name": "GET Workout By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/workouts/{{testWorkoutId}}", "host": ["{{baseUrl}}"], "path": ["api", "workouts", "{{testWorkoutId}}"] }
+          }
+        },
+        {
+          "name": "GET User Workouts",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users/{{testUserId}}/workouts", "host": ["{{baseUrl}}"], "path": ["api", "users", "{{testUserId}}", "workouts"] }
+          }
+        },
+        {
+          "name": "GET Workouts By Date",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/workouts?date={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "workouts"],
+              "query": [{ "key": "date", "value": "{{sampleDate}}" }]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Workout",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"workoutType\": \"RUNNING\",\n  \"durationMinutes\": 45,\n  \"caloriesBurned\": 380,\n  \"workoutDate\": \"2026-09-28\",\n  \"notes\": \"Extended run with sprints\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/workouts/{{testWorkoutId}}", "host": ["{{baseUrl}}"], "path": ["api", "workouts", "{{testWorkoutId}}"] }
+          }
+        },
+        {
+          "name": "DELETE Workout",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/workouts/{{testWorkoutId}}", "host": ["{{baseUrl}}"], "path": ["api", "workouts", "{{testWorkoutId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Meal APIs",
+      "item": [
+        {
+          "name": "POST Create Meal",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"mealType\": \"BREAKFAST\",\n  \"foodItem\": \"Oatmeal\",\n  \"quantity\": \"1 bowl\",\n  \"calories\": 300,\n  \"mealDate\": \"2026-09-28\",\n  \"notes\": \"With banana\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/meals", "host": ["{{baseUrl}}"], "path": ["api", "meals"] }
+          }
+        },
+        {
+          "name": "GET All Meals",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/meals", "host": ["{{baseUrl}}"], "path": ["api", "meals"] }
+          }
+        },
+        {
+          "name": "GET Meal By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/meals/{{testMealId}}", "host": ["{{baseUrl}}"], "path": ["api", "meals", "{{testMealId}}"] }
+          }
+        },
+        {
+          "name": "GET User Meals",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users/{{testUserId}}/meals", "host": ["{{baseUrl}}"], "path": ["api", "users", "{{testUserId}}", "meals"] }
+          }
+        },
+        {
+          "name": "GET Meals By Date",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/meals?date={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "meals"],
+              "query": [{ "key": "date", "value": "{{sampleDate}}" }]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Meal",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mealType\": \"LUNCH\",\n  \"foodItem\": \"Brown Rice and Grilled Chicken\",\n  \"quantity\": \"1 bowl\",\n  \"calories\": 650,\n  \"mealDate\": \"2026-09-28\",\n  \"notes\": \"High protein lunch\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/meals/{{testMealId}}", "host": ["{{baseUrl}}"], "path": ["api", "meals", "{{testMealId}}"] }
+          }
+        },
+        {
+          "name": "DELETE Meal",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/meals/{{testMealId}}", "host": ["{{baseUrl}}"], "path": ["api", "meals", "{{testMealId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Goal APIs",
+      "item": [
+        {
+          "name": "POST Create Goal",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"weeklyWorkoutTarget\": 5,\n  \"weekStartDate\": \"2026-09-28\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/goals", "host": ["{{baseUrl}}"], "path": ["api", "goals"] }
+          }
+        },
+        {
+          "name": "GET Goal By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/goals/{{testGoalId}}", "host": ["{{baseUrl}}"], "path": ["api", "goals", "{{testGoalId}}"] }
+          }
+        },
+        {
+          "name": "GET User Goal",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/goals?weekStart={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "goals"],
+              "query": [{ "key": "weekStart", "value": "{{sampleDate}}" }]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Goal",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weeklyWorkoutTarget\": 6,\n  \"weekStartDate\": \"2026-09-28\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/goals/{{testGoalId}}", "host": ["{{baseUrl}}"], "path": ["api", "goals", "{{testGoalId}}"] }
+          }
+        },
+        {
+          "name": "DELETE Goal",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/goals/{{testGoalId}}", "host": ["{{baseUrl}}"], "path": ["api", "goals", "{{testGoalId}}"] }
+          }
+        },
+        {
+          "name": "GET Goal Progress",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/goals/progress?weekStart={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "goals", "progress"],
+              "query": [{ "key": "weekStart", "value": "{{sampleDate}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Summary APIs",
+      "item": [
+        {
+          "name": "GET Daily Calorie Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/summary/daily?date={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "summary", "daily"],
+              "query": [{ "key": "date", "value": "{{sampleDate}}" }]
+            }
+          }
+        },
+        {
+          "name": "GET Weekly Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/summary/weekly?weekStart={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "summary", "weekly"],
+              "query": [{ "key": "weekStart", "value": "{{sampleDate}}" }]
+            }
+          }
+        },
+        {
+          "name": "GET Weekly Workout Trend",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/workouts/weekly?weekStart={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "workouts", "weekly"],
+              "query": [{ "key": "weekStart", "value": "{{sampleDate}}" }]
+            }
+          }
+        },
+        {
+          "name": "GET Weekly Goal Progress",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{testUserId}}/goals/progress?weekStart={{sampleDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{testUserId}}", "goals", "progress"],
+              "query": [{ "key": "weekStart", "value": "{{sampleDate}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Negative Test Cases",
+      "item": [
+        {
+          "name": "1. Negative Workout Calories (Expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"workoutType\": \"RUNNING\",\n  \"durationMinutes\": 30,\n  \"caloriesBurned\": -100,\n  \"workoutDate\": \"2026-09-28\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/workouts", "host": ["{{baseUrl}}"], "path": ["api", "workouts"] }
+          }
+        },
+        {
+          "name": "2. Negative Meal Calories (Expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"mealType\": \"BREAKFAST\",\n  \"foodItem\": \"Oatmeal\",\n  \"calories\": -500,\n  \"mealDate\": \"2026-09-28\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/meals", "host": ["{{baseUrl}}"], "path": ["api", "meals"] }
+          }
+        },
+        {
+          "name": "3. Zero Workout Duration (Expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"workoutType\": \"WALKING\",\n  \"durationMinutes\": 0,\n  \"caloriesBurned\": 100,\n  \"workoutDate\": \"2026-09-28\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/workouts", "host": ["{{baseUrl}}"], "path": ["api", "workouts"] }
+          }
+        },
+        {
+          "name": "4. Missing User (Expect 404)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 99999,\n  \"workoutType\": \"RUNNING\",\n  \"durationMinutes\": 30,\n  \"caloriesBurned\": 250,\n  \"workoutDate\": \"2026-09-28\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/workouts", "host": ["{{baseUrl}}"], "path": ["api", "workouts"] }
+          }
+        },
+        {
+          "name": "5. Non-Existent Workout (Expect 404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/workouts/99999", "host": ["{{baseUrl}}"], "path": ["api", "workouts", "99999"] }
+          }
+        },
+        {
+          "name": "6. Non-Existent Meal (Expect 404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/meals/99999", "host": ["{{baseUrl}}"], "path": ["api", "meals", "99999"] }
+          }
+        },
+        {
+          "name": "7. Non-Existent Goal (Expect 404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/goals/99999", "host": ["{{baseUrl}}"], "path": ["api", "goals", "99999"] }
+          }
+        },
+        {
+          "name": "8. Weekly Summary With No Entries (Rule 2 - Expect 404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1/summary/weekly?weekStart=2035-01-01",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1", "summary", "weekly"],
+              "query": [{ "key": "weekStart", "value": "2035-01-01" }]
+            }
+          }
+        },
+        {
+          "name": "9. Invalid Request Body (Expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"workoutType\": \"INVALID_TYPE\",\n  \"durationMinutes\": \"not-a-number\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/workouts", "host": ["{{baseUrl}}"], "path": ["api", "workouts"] }
+          }
+        },
+        {
+          "name": "10. Invalid User Email (Expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invalid User\",\n  \"email\": \"not-an-email\",\n  \"phone\": \"1234567890\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          }
+        }
+      ]
+    }
+  ]
+}

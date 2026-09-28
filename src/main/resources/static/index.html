@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitLog — Personal Workout and Calorie Tracker</title>
+    <meta name="description" content="Personal Workout and Calorie Tracker for fitness beginners to track daily workouts, meals, calorie balance, and weekly fitness goals.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-icon">🔥</div>
+                <div class="logo-text">
+                    <h1>FitLog</h1>
+                    <span class="logo-sub">Workout &amp; Calorie Tracker</span>
+                </div>
+            </div>
+
+            <div class="user-selector-area">
+                <label for="activeUserSelect" class="user-label">Active User:</label>
+                <div class="custom-select-wrapper">
+                    <select id="activeUserSelect" class="user-dropdown">
+                        <option value="">Loading users...</option>
+                    </select>
+                </div>
+                <a href="/swagger-ui/index.html" target="_blank" class="nav-btn swagger-link" title="Open Swagger Documentation">
+                    ⚡ Swagger API
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs" aria-label="Main Navigation">
+            <button class="tab-btn active" data-tab="tab-dashboard" id="tabBtnDashboard">
+                <span class="tab-icon">📊</span> Dashboard &amp; Daily
+            </button>
+            <button class="tab-btn" data-tab="tab-workouts" id="tabBtnWorkouts">
+                <span class="tab-icon">🏋️‍♂️</span> Workouts
+            </button>
+            <button class="tab-btn" data-tab="tab-meals" id="tabBtnMeals">
+                <span class="tab-icon">🥗</span> Meals
+            </button>
+            <button class="tab-btn" data-tab="tab-weekly" id="tabBtnWeekly">
+                <span class="tab-icon">📈</span> Weekly Summary &amp; Trend
+            </button>
+            <button class="tab-btn" data-tab="tab-goal" id="tabBtnGoal">
+                <span class="tab-icon">🎯</span> Goal &amp; Progress
+            </button>
+            <button class="tab-btn highlight-tab" data-tab="tab-viva" id="tabBtnViva">
+                <span class="tab-icon">🧪</span> Viva / Business Rules Lab
+            </button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Toast Notification Container -->
+        <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+        <!-- 1. DASHBOARD & DAILY TAB -->
+        <section id="tab-dashboard" class="tab-pane active">
+            <!-- Global Overview Metric Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper user-accent">👤</div>
+                    <div class="stat-info">
+                        <span class="stat-title">Total Users</span>
+                        <h3 class="stat-value" id="statTotalUsers">3</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper workout-accent">🏃‍♂️</div>
+                    <div class="stat-info">
+                        <span class="stat-title">Total Workouts</span>
+                        <h3 class="stat-value" id="statTotalWorkouts">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper meal-accent">🍎</div>
+                    <div class="stat-info">
+                        <span class="stat-title">Total Meals</span>
+                        <h3 class="stat-value" id="statTotalMeals">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper goal-accent">🎯</div>
+                    <div class="stat-info">
+                        <span class="stat-title">Weekly Goal Target</span>
+                        <h3 class="stat-value" id="statGoalTarget">—</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Summary Section -->
+            <div class="card daily-summary-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Daily Calorie Balance</h2>
+                        <p class="card-desc">Track Calories Consumed (In) vs Calories Burned (Out)</p>
+                    </div>
+                    <div class="date-picker-group">
+                        <label for="dailyDateInput">Select Date:</label>
+                        <input type="date" id="dailyDateInput" value="2026-09-28" class="form-input date-input">
+                        <button id="btnRefreshDaily" class="btn btn-secondary btn-sm">Refresh</button>
+                    </div>
+                </div>
+
+                <div class="calorie-balance-grid">
+                    <div class="calorie-metric-box in-box">
+                        <div class="metric-label">Calories Consumed (In)</div>
+                        <div class="metric-number"><span id="dailyCalConsumed">0</span> <span class="unit">kcal</span></div>
+                        <span class="badge in-badge">Food Intake</span>
+                    </div>
+
+                    <div class="calorie-metric-box out-box">
+                        <div class="metric-label">Calories Burned (Out)</div>
+                        <div class="metric-number"><span id="dailyCalBurned">0</span> <span class="unit">kcal</span></div>
+                        <span class="badge out-badge">Exercise &amp; Activity</span>
+                    </div>
+
+                    <div class="calorie-metric-box net-box" id="netCalorieBox">
+                        <div class="metric-label">Net Calories</div>
+                        <div class="metric-number"><span id="dailyNetCal">0</span> <span class="unit">kcal</span></div>
+                        <span class="badge net-badge" id="netBadge">Balance</span>
+                    </div>
+                </div>
+
+                <!-- Daily Breakdown Lists -->
+                <div class="daily-breakdown-lists">
+                    <div class="breakdown-col">
+                        <div class="sub-header">
+                            <h3>Workouts on this Date</h3>
+                            <button class="btn btn-primary btn-xs" onclick="openAddWorkoutModal()">+ Add</button>
+                        </div>
+                        <div id="dailyWorkoutsList" class="mini-item-list">
+                            <p class="empty-state">No workouts logged on this date.</p>
+                        </div>
+                    </div>
+                    <div class="breakdown-col">
+                        <div class="sub-header">
+                            <h3>Meals on this Date</h3>
+                            <button class="btn btn-primary btn-xs" onclick="openAddMealModal()">+ Add</button>
+                        </div>
+                        <div id="dailyMealsList" class="mini-item-list">
+                            <p class="empty-state">No meals logged on this date.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. WORKOUTS TAB -->
+        <section id="tab-workouts" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Workout Records</h2>
+                        <p class="card-desc">Log cardio, gym, and exercises with calories burned</p>
+                    </div>
+                    <div class="action-group">
+                        <button class="btn btn-primary" onclick="openAddWorkoutModal()">+ Log New Workout</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table" id="workoutsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Workout Type</th>
+                                <th>Duration</th>
+                                <th>Calories Burned</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workoutsTableBody">
+                            <tr><td colspan="7" class="loading-state">Loading workouts...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MEALS TAB -->
+        <section id="tab-meals" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Meal Records</h2>
+                        <p class="card-desc">Track breakfast, lunch, dinner, snacks and calorie intake</p>
+                    </div>
+                    <div class="action-group">
+                        <button class="btn btn-primary" onclick="openAddMealModal()">+ Log New Meal</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table" id="mealsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Meal Type</th>
+                                <th>Food Item</th>
+                                <th>Quantity</th>
+                                <th>Calories</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mealsTableBody">
+                            <tr><td colspan="8" class="loading-state">Loading meals...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. WEEKLY SUMMARY & TREND TAB -->
+        <section id="tab-weekly" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Weekly Calorie &amp; Workout Summary</h2>
+                        <p class="card-desc">Calculated directly from database records (Enforces Mandatory Rule 2)</p>
+                    </div>
+                    <div class="date-picker-group">
+                        <label for="weeklyStartDateInput">Week Start:</label>
+                        <input type="date" id="weeklyStartDateInput" value="2026-09-28" class="form-input date-input">
+                        <button id="btnFetchWeekly" class="btn btn-secondary btn-sm">Load Summary</button>
+                    </div>
+                </div>
+
+                <div id="weeklySummaryContent">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-title">Total Calories Consumed</span>
+                            <h3 class="stat-value text-emerald" id="weeklyCalConsumed">—</h3>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-title">Total Calories Burned</span>
+                            <h3 class="stat-value text-amber" id="weeklyCalBurned">—</h3>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-title">Net Weekly Calories</span>
+                            <h3 class="stat-value text-cyan" id="weeklyNetCal">—</h3>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-title">Total Workouts Completed</span>
+                            <h3 class="stat-value text-indigo" id="weeklyWorkoutCount">—</h3>
+                        </div>
+                    </div>
+
+                    <!-- 7-Day Trend Breakdown -->
+                    <div class="trend-section">
+                        <h3>7-Day Workout &amp; Calorie Breakdown</h3>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Calories Consumed</th>
+                                        <th>Calories Burned</th>
+                                        <th>Net Calories</th>
+                                        <th>Workouts</th>
+                                        <th>Meals</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="weeklyDailyBreakdownBody">
+                                    <tr><td colspan="6" class="empty-state">Select a week to load data.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. GOAL & PROGRESS TAB -->
+        <section id="tab-goal" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Weekly Workout Goal &amp; Progress</h2>
+                        <p class="card-desc">Set target workout count per week and monitor real-time completion</p>
+                    </div>
+                    <div class="date-picker-group">
+                        <label for="goalWeekStartInput">Week Start Date:</label>
+                        <input type="date" id="goalWeekStartInput" value="2026-09-28" class="form-input date-input">
+                        <button id="btnFetchGoalProgress" class="btn btn-secondary btn-sm">Check Progress</button>
+                    </div>
+                </div>
+
+                <div class="goal-layout">
+                    <!-- Progress Card -->
+                    <div class="goal-display-card">
+                        <div class="goal-header-line">
+                            <h3>Current Weekly Target</h3>
+                            <span id="goalBadge" class="goal-badge">Checking...</span>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-bar-bg">
+                                <div id="goalProgressBar" class="progress-bar-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="progress-labels">
+                                <span>Completed: <strong id="goalCompletedCount">0</strong></span>
+                                <span>Target: <strong id="goalTargetCount">0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="goal-stats-row">
+                            <div class="goal-stat-item">
+                                <span class="label">Remaining</span>
+                                <span class="value" id="goalRemainingCount">0</span>
+                            </div>
+                            <div class="goal-stat-item">
+                                <span class="label">Achievement</span>
+                                <span class="value" id="goalPercentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Set/Update Goal Form -->
+                    <div class="goal-form-card">
+                        <h3>Set or Update Goal</h3>
+                        <form id="goalForm" onsubmit="handleSaveGoal(event)">
+                            <div class="form-group">
+                                <label for="formGoalTarget">Weekly Workout Target (Count):</label>
+                                <input type="number" id="formGoalTarget" min="1" max="50" required class="form-input" placeholder="e.g. 5">
+                                <small class="form-help">Must be greater than 0 (Rule 4)</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="formGoalWeekStart">Week Start Date:</label>
+                                <input type="date" id="formGoalWeekStart" value="2026-09-28" required class="form-input">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Save Weekly Goal</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. VIVA / BUSINESS RULES TEST LAB -->
+        <section id="tab-viva" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>College Practical &amp; Viva Demonstration Lab</h2>
+                        <p class="card-desc">Execute live positive and negative test cases to demonstrate business rules to examiners</p>
+                    </div>
+                </div>
+
+                <div class="viva-grid">
+                    <!-- Test 1: Negative Calories Workout -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <span class="test-number">Rule 1</span>
+                            <h4>Negative Workout Calories</h4>
+                        </div>
+                        <p class="test-desc">Attempts to log a workout with <code>caloriesBurned: -100</code>. Enforces non-negative calories.</p>
+                        <button class="btn btn-outline btn-sm" onclick="runNegativeWorkoutCalorieTest()">Test Rule 1 (Workout)</button>
+                    </div>
+
+                    <!-- Test 2: Negative Calories Meal -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <span class="test-number">Rule 1</span>
+                            <h4>Negative Meal Calories</h4>
+                        </div>
+                        <p class="test-desc">Attempts to log a meal with <code>calories: -500</code>. Enforces non-negative calories.</p>
+                        <button class="btn btn-outline btn-sm" onclick="runNegativeMealCalorieTest()">Test Rule 1 (Meal)</button>
+                    </div>
+
+                    <!-- Test 3: Rule 2 Empty Week -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <span class="test-number">Rule 2</span>
+                            <h4>Weekly Summary Without Data</h4>
+                        </div>
+                        <p class="test-desc">Requests weekly summary for <code>weekStart=2035-01-01</code>. Must reject with 404 NOT FOUND.</p>
+                        <button class="btn btn-outline btn-sm" onclick="runEmptyWeekTest()">Test Rule 2 (Empty Week)</button>
+                    </div>
+
+                    <!-- Test 4: Zero Duration -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <span class="test-number">Rule 3</span>
+                            <h4>Zero Workout Duration</h4>
+                        </div>
+                        <p class="test-desc">Attempts to log a workout with <code>durationMinutes: 0</code>. Must be rejected.</p>
+                        <button class="btn btn-outline btn-sm" onclick="runZeroDurationTest()">Test Rule 3 (Duration)</button>
+                    </div>
+
+                    <!-- Test 5: Missing User -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <span class="test-number">Rule 6</span>
+                            <h4>Non-Existent User</h4>
+                        </div>
+                        <p class="test-desc">Attempts to create workout for <code>userId: 99999</code>. Must return 404 NOT FOUND.</p>
+                        <button class="btn btn-outline btn-sm" onclick="runMissingUserTest()">Test Rule 6 (User Check)</button>
+                    </div>
+
+                    <!-- Test 6: Invalid Email -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <span class="test-number">Validation</span>
+                            <h4>Invalid User Email</h4>
+                        </div>
+                        <p class="test-desc">Attempts to register user with invalid email format. Must return 400 Validation Error.</p>
+                        <button class="btn btn-outline btn-sm" onclick="runInvalidEmailTest()">Test Bean Validation</button>
+                    </div>
+                </div>
+
+                <!-- Live Test Output Terminal -->
+                <div class="test-terminal">
+                    <div class="terminal-header">
+                        <span>Console / HTTP Response Output</span>
+                        <button class="btn btn-xs btn-secondary" onclick="clearTestTerminal()">Clear</button>
+                    </div>
+                    <pre id="terminalOutput" class="terminal-body">// Ready. Click any test above to demonstrate live HTTP requests &amp; responses.</pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- WORKOUT MODAL -->
+    <div id="workoutModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="workoutModalTitle">Log Workout</h3>
+                <button class="modal-close" onclick="closeWorkoutModal()">&times;</button>
+            </div>
+            <form id="workoutForm" onsubmit="handleSaveWorkout(event)">
+                <input type="hidden" id="formWorkoutId">
+                <div class="form-group">
+                    <label for="formWorkoutType">Workout Type *</label>
+                    <select id="formWorkoutType" required class="form-input">
+                        <option value="RUNNING">RUNNING</option>
+                        <option value="WALKING">WALKING</option>
+                        <option value="CYCLING">CYCLING</option>
+                        <option value="GYM">GYM</option>
+                        <option value="YOGA">YOGA</option>
+                        <option value="SWIMMING">SWIMMING</option>
+                        <option value="OTHER">OTHER</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formWorkoutDuration">Duration (Minutes) *</label>
+                        <input type="number" id="formWorkoutDuration" min="1" required class="form-input" placeholder="e.g. 30">
+                    </div>
+                    <div class="form-group">
+                        <label for="formWorkoutCalories">Calories Burned *</label>
+                        <input type="number" id="formWorkoutCalories" min="0" required class="form-input" placeholder="e.g. 250">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="formWorkoutDate">Workout Date *</label>
+                    <input type="date" id="formWorkoutDate" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="formWorkoutNotes">Notes (Optional)</label>
+                    <input type="text" id="formWorkoutNotes" class="form-input" placeholder="e.g. Morning park run">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeWorkoutModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveWorkout">Save Workout</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MEAL MODAL -->
+    <div id="mealModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="mealModalTitle">Log Meal</h3>
+                <button class="modal-close" onclick="closeMealModal()">&times;</button>
+            </div>
+            <form id="mealForm" onsubmit="handleSaveMeal(event)">
+                <input type="hidden" id="formMealId">
+                <div class="form-group">
+                    <label for="formMealType">Meal Type *</label>
+                    <select id="formMealType" required class="form-input">
+                        <option value="BREAKFAST">BREAKFAST</option>
+                        <option value="LUNCH">LUNCH</option>
+                        <option value="DINNER">DINNER</option>
+                        <option value="SNACK">SNACK</option>
+                        <option value="OTHER">OTHER</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="formMealFoodItem">Food Item *</label>
+                    <input type="text" id="formMealFoodItem" required class="form-input" placeholder="e.g. Oatmeal with banana">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formMealQuantity">Quantity</label>
+                        <input type="text" id="formMealQuantity" class="form-input" placeholder="e.g. 1 bowl / 200g">
+                    </div>
+                    <div class="form-group">
+                        <label for="formMealCalories">Calories (kcal) *</label>
+                        <input type="number" id="formMealCalories" min="0" required class="form-input" placeholder="e.g. 300">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="formMealDate">Meal Date *</label>
+                    <input type="date" id="formMealDate" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="formMealNotes">Notes (Optional)</label>
+                    <input type="text" id="formMealNotes" class="form-input" placeholder="e.g. Low sodium">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeMealModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveMeal">Save Meal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
